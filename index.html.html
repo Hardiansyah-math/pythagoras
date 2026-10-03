@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pythagoras Quest - SMPN 1 Terusan Nunyai</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#0a0d1a',
+                            card: '#121829',
+                            border: '#1f293d',
+                            cyan: '#00f3ff',
+                            pink: '#ff007f',
+                            purple: '#a855f7',
+                            yellow: '#ffcc00',
+                            green: '#00ff66'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #060913;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 243, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(255, 0, 127, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 60%);
+            min-height: 100vh;
+            color: #e2e8f0;
+        }
+
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Neon Glow Effects */
+        .glow-cyan {
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4), inset 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+        .glow-pink {
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4), inset 0 0 10px rgba(255, 0, 127, 0.2);
+        }
+        .glow-purple {
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+        .glow-yellow {
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+        }
+
+        .text-glow-cyan {
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
+        }
+        .text-glow-pink {
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.7);
+        }
+        .text-glow-yellow {
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
+        }
+
+        /* Cyber Grid Background overlay */
+        .cyber-grid {
+            background-size: 30px 30px;
+            background-image: 
+                linear-gradient(to right, rgba(31, 41, 61, 0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(31, 41, 61, 0.3) 1px, transparent 1px);
+        }
+
+        /* Pulsing & Float Animations */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(0,243,255,0.6)); }
+            50% { filter: drop-shadow(0 0 15px rgba(0,243,255,0.9)); }
+        }
+        .animate-glow-triangle {
+            animation: pulseGlow 2.5s infinite;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0d1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+    </style>
+</head>
+<body class="cyber-grid min-h-screen flex flex-col justify-between p-3 md:p-6 antialiased selection:bg-cyber-pink selection:text-white">
+
+    <!-- HEADER BRANDING & STATS BAR -->
+    <header class="max-w-7xl mx-auto w-full mb-6">
+        <div class="bg-cyber-card/90 border border-cyber-border rounded-2xl p-4 md:p-5 backdrop-blur-md shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-4 relative overflow-hidden">
+            
+            <!-- Neon Decorative Top Line -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyber-cyan via-cyber-purple to-cyber-pink"></div>
+
+            <!-- School & Game Title -->
+            <div class="flex items-center gap-4 text-center lg:text-left">
+                <div class="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-gradient-to-tr from-cyber-cyan to-cyber-purple p-0.5 glow-cyan flex-shrink-0 animate-float">
+                    <div class="w-full h-full bg-cyber-bg rounded-[14px] flex items-center justify-center">
+                        <i class="fa-solid fa-shapes text-2xl md:text-3xl text-cyber-cyan"></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-center lg:justify-start gap-2">
+                        <span class="bg-cyber-pink/20 text-cyber-pink border border-cyber-pink/40 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">CYBER MATH ARENA</span>
+                        <span class="text-xs text-slate-400 font-semibold">• KELAS 8</span>
+                    </div>
+                    <h1 class="text-xl md:text-2xl font-black font-orbitron tracking-wide text-white text-glow-cyan">
+                        PYTHAGORAS QUEST
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">SMP NEGERI 1 TERUSAN NUNYAI</p>
+                </div>
+            </div>
+
+            <!-- Stats Dashboard -->
+            <div class="flex flex-wrap items-center justify-center lg:justify-end gap-3 w-full lg:w-auto">
+                <!-- Score Card -->
+                <div class="bg-cyber-bg/80 border border-cyber-border px-4 py-2 rounded-xl flex items-center gap-3 min-w-[120px]">
+                    <i class="fa-solid fa-trophy text-cyber-yellow text-xl"></i>
+                    <div>
+                        <div class="text-[10px] uppercase font-bold text-slate-400">TOTAL POIN</div>
+                        <div id="scoreDisplay" class="text-xl font-black font-orbitron text-cyber-yellow text-glow-yellow">0</div>
+                    </div>
+                </div>
+
+                <!-- Combo Multiplier -->
+                <div class="bg-cyber-bg/80 border border-cyber-border px-4 py-2 rounded-xl flex items-center gap-3 min-w-[120px]">
+                    <i class="fa-solid fa-bolt text-cyber-pink text-xl animate-bounce"></i>
+                    <div>
+                        <div class="text-[10px] uppercase font-bold text-slate-400">COMBO</div>
+                        <div id="comboDisplay" class="text-xl font-black font-orbitron text-cyber-pink text-glow-pink">x1</div>
+                    </div>
+                </div>
+
+                <!-- Progress Tracker -->
+                <div class="bg-cyber-bg/80 border border-cyber-border px-4 py-2 rounded-xl flex items-center gap-3 min-w-[120px]">
+                    <i class="fa-solid fa-circle-check text-cyber-cyan text-xl"></i>
+                    <div>
+                        <div class="text-[10px] uppercase font-bold text-slate-400">PROGRES</div>
+                        <div id="progressDisplay" class="text-xl font-black font-orbitron text-cyber-cyan">0 / 12</div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex gap-2">
+                    <button onclick="toggleAudio()" id="audioBtn" class="bg-cyber-bg hover:bg-slate-800 border border-cyber-border p-3 rounded-xl text-slate-300 hover:text-cyber-cyan transition active:scale-95" title="Suara On/Off">
+                        <i class="fa-solid fa-volume-high text-lg"></i>
+                    </button>
+                    <button onclick="resetGamePrompt()" class="bg-cyber-pink/20 hover:bg-cyber-pink/30 border border-cyber-pink/40 p-3 rounded-xl text-cyber-pink transition active:scale-95" title="Reset Permainan">
+                        <i class="fa-solid fa-rotate-right text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto w-full flex-grow mb-6">
+        
+        <!-- Mission Mode Filter Badges -->
+        <div class="flex flex-wrap justify-center gap-3 mb-6">
+            <span class="bg-cyber-cyan/10 border border-cyber-cyan/30 text-cyber-cyan px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved"></i> LEVEL 1: Mencari Sisi Miring (100 Pts)
+            </span>
+            <span class="bg-cyber-purple/10 border border-cyber-purple/30 text-cyber-purple px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2">
+                <i class="fa-solid fa-cubes"></i> LEVEL 2: Sisi Tegak & Tripel (200 Pts)
+            </span>
+            <span class="bg-cyber-pink/10 border border-cyber-pink/30 text-cyber-pink px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2">
+                <i class="fa-solid fa-crown"></i> LEVEL 3: Segitiga Istimewa & Soal Cerita (300 Pts)
+            </span>
+        </div>
+
+        <!-- Quest Card Grid (12 Arenas) -->
+        <div id="questGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+            <!-- Dynamic JavaScript Content -->
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="max-w-7xl mx-auto w-full text-center text-xs text-slate-500 py-4 border-t border-cyber-border">
+        Cyber Math Interactive - Teorema Pythagoras Kelas 8 SMPN 1 Terusan Nunyai
+    </footer>
+
+    <!-- QUESTION & ARENA MODAL -->
+    <div id="arenaModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-3 md:p-6 hidden">
+        <div class="bg-cyber-card border border-cyber-cyan/50 rounded-3xl max-w-4xl w-full p-5 md:p-8 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-cyber-border mb-4">
+                <div class="flex items-center gap-3">
+                    <span id="modalLevelBadge" class="bg-cyber-cyan text-slate-950 font-black text-xs px-3 py-1 rounded-lg uppercase tracking-wider">LEVEL 1</span>
+                    <span id="modalPtsBadge" class="text-xs font-bold text-cyber-yellow bg-cyber-yellow/10 border border-cyber-yellow/30 px-3 py-1 rounded-lg">+100 PTS</span>
+                </div>
+
+                <!-- Timer Bar & Text -->
+                <div class="flex items-center gap-3 bg-cyber-bg border border-cyber-border px-4 py-1.5 rounded-xl">
+                    <i class="fa-solid fa-stopwatch text-cyber-pink animate-pulse"></i>
+                    <span id="timerText" class="text-lg font-black font-orbitron text-cyber-pink">45s</span>
+                </div>
+            </div>
+
+            <!-- Timer Progress Bar -->
+            <div class="w-full bg-cyber-bg rounded-full h-1.5 mb-5 overflow-hidden border border-cyber-border">
+                <div id="timerBar" class="bg-gradient-to-r from-cyber-cyan via-cyber-purple to-cyber-pink h-full w-full transition-all duration-1000 ease-linear"></div>
+            </div>
+
+            <!-- Modal Scrollable Content -->
+            <div class="overflow-y-auto pr-1 space-y-6 flex-grow">
+                
+                <!-- Triangle Visual Simulator (Dynamic SVG) -->
+                <div class="bg-cyber-bg/90 border border-cyber-border rounded-2xl p-4 flex flex-col md:flex-row items-center justify-around gap-4 min-h-[200px] relative">
+                    <div class="absolute top-2 left-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">VISUAL SIMULATOR SEGITIGA</div>
+                    
+                    <!-- Dynamic SVG Rendered Here -->
+                    <div id="svgContainer" class="w-full max-w-[260px] h-[180px] flex items-center justify-center">
+                        <!-- Dynamic SVG Triangle -->
+                    </div>
+
+                    <!-- Formula Reference Badge -->
+                    <div class="bg-cyber-card/80 border border-cyber-border p-3.5 rounded-xl text-xs space-y-1.5 font-orbitron text-slate-300 w-full md:w-auto">
+                        <div class="text-cyber-cyan font-bold text-sm mb-1"><i class="fa-solid fa-calculator mr-1"></i> FORMULA UTAMA:</div>
+                        <div>c² = a² + b² <span class="text-slate-500">(Sisi Miring)</span></div>
+                        <div>a² = c² - b² <span class="text-slate-500">(Sisi Tegak)</span></div>
+                        <div>b² = c² - a² <span class="text-slate-500">(Sisi Alas)</span></div>
+                    </div>
+                </div>
+
+                <!-- Question Text -->
+                <div class="bg-cyber-bg/50 border border-cyber-border p-4 rounded-2xl">
+                    <h3 id="questionText" class="text-base md:text-lg font-semibold text-white leading-relaxed">
+                        Loading quest description...
+                    </h3>
+                </div>
+
+                <!-- Answer Choices (Multiple Choice Grid) -->
+                <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <!-- Dynamic Options -->
+                </div>
+
+                <!-- Step-by-Step Explanation Box (Hidden initially) -->
+                <div id="explanationBox" class="hidden bg-emerald-950/40 border border-emerald-500/50 rounded-2xl p-4 text-sm text-emerald-200">
+                    <div id="resultHeader" class="font-bold text-base mb-2 flex items-center gap-2"></div>
+                    <div id="explanationContent" class="space-y-1 font-mono text-xs md:text-sm"></div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="pt-4 border-t border-cyber-border flex items-center justify-between mt-auto">
+                <span class="text-xs text-slate-500 font-semibold">SMPN 1 TERUSAN NUNYAI • MATH ARENA</span>
+                <button id="closeModalBtn" onclick="closeArenaModal()" class="hidden bg-gradient-to-r from-cyber-cyan to-blue-600 text-slate-950 font-black font-orbitron px-6 py-2.5 rounded-xl hover:brightness-110 transition shadow-lg glow-cyan">
+                    LANJUT KE PAPAN
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RECAP / VICTORY MODAL -->
+    <div id="recapModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-lg z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-cyber-card border border-cyber-yellow/60 rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl text-center relative overflow-hidden glow-yellow">
+            
+            <div class="w-20 h-20 rounded-3xl bg-cyber-yellow/20 border border-cyber-yellow/50 mx-auto flex items-center justify-center text-cyber-yellow text-4xl mb-4 animate-bounce">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+
+            <h2 class="text-2xl md:text-3xl font-black font-orbitron text-white text-glow-yellow mb-1">MISI SELESAI!</h2>
+            <p class="text-xs text-slate-400 mb-6">Hasil Evaluasi Teorema Pythagoras <br><strong class="text-cyber-cyan">SMPN 1 Terusan Nunyai</strong></p>
+
+            <div class="bg-cyber-bg border border-cyber-border rounded-2xl p-5 mb-6 space-y-3">
+                <div>
+                    <div class="text-[10px] uppercase font-bold text-slate-400">TOTAL SKOR AKHIR</div>
+                    <div id="recapScore" class="text-4xl font-black font-orbitron text-cyber-yellow text-glow-yellow">0</div>
+                </div>
+                <div class="h-px bg-cyber-border"></div>
+                <div class="flex justify-around text-xs">
+                    <div>
+                        <span class="text-slate-400">Akurasi:</span>
+                        <span id="recapAccuracy" class="font-bold text-cyber-cyan ml-1">100%</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400">Max Combo:</span>
+                        <span id="recapMaxCombo" class="font-bold text-cyber-pink ml-1">x3</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="resetGame(); closeRecapModal();" class="w-full py-3.5 bg-gradient-to-r from-cyber-cyan via-cyber-purple to-cyber-pink text-white font-black font-orbitron rounded-xl hover:brightness-110 transition shadow-xl glow-cyan text-sm">
+                <i class="fa-solid fa-rotate-right mr-2"></i> MAIN LAGI
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // WEB AUDIO SYNTHESIZER
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioMuted = false;
+
+        function playSynthesizedSound(type) {
+            if (audioMuted) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.setValueAtTime(140, now + 0.15);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function toggleAudio() {
+            audioMuted = !audioMuted;
+            const btn = document.getElementById('audioBtn');
+            btn.innerHTML = audioMuted ? 
+                '<i class="fa-solid fa-volume-xmark text-lg text-cyber-pink"></i>' : 
+                '<i class="fa-solid fa-volume-high text-lg"></i>';
+        }
+
+        // QUESTION BANK (12 Pilihan Soal Terstruktur Pythagoras Kelas 8)
+        const pythagorasBank = [
+            // LEVEL 1: Mencari Sisi Miring c (100 PTS)
+            {
+                id: 1,
+                level: 1,
+                points: 100,
+                a: 3, b: 4, c: "?",
+                question: "Sebuah segitiga siku-siku memiliki alas a = 3 cm dan tinggi b = 4 cm. Hitunglah panjang sisi miring (c)!",
+                options: ["c = 5 cm", "c = 6 cm", "c = 7 cm", "c = 25 cm"],
+                correctIndex: 0,
+                explanation: [
+                    "c² = a² + b²",
+                    "c² = 3² + 4²",
+                    "c² = 9 + 16 = 25",
+                    "c = √25 = 5 cm"
+                ]
+            },
+            {
+                id: 2,
+                level: 1,
+                points: 100,
+                a: 6, b: 8, c: "?",
+                question: "Tentukan panjang hipotenusa segitiga siku-siku dengan panjang sisi tegak 6 cm dan 8 cm!",
+                options: ["12 cm", "14 cm", "10 cm", "16 cm"],
+                correctIndex: 2,
+                explanation: [
+                    "c² = 6² + 8²",
+                    "c² = 36 + 64 = 100",
+                    "c = √100 = 10 cm"
+                ]
+            },
+            {
+                id: 3,
+                level: 1,
+                points: 100,
+                a: 5, b: 12, c: "?",
+                question: "Segitiga siku-siku ABC siku-siku di B. Jika AB = 5 cm dan BC = 12 cm, hitung panjang AC!",
+                options: ["13 cm", "15 cm", "17 cm", "14 cm"],
+                correctIndex: 0,
+                explanation: [
+                    "AC² = AB² + BC²",
+                    "AC² = 5² + 12² = 25 + 144 = 169",
+                    "AC = √169 = 13 cm"
+                ]
+            },
+            {
+                id: 4,
+                level: 1,
+                points: 100,
+                a: 9, b: 12, c: "?",
+                question: "Hitunglah nilai c pada segitiga siku-siku dengan sisi alas 9 cm dan tinggi 12 cm!",
+                options: ["18 cm", "15 cm", "21 cm", "16 cm"],
+                correctIndex: 1,
+                explanation: [
+                    "c² = 9² + 12²",
+                    "c² = 81 + 144 = 225",
+                    "c = √225 = 15 cm"
+                ]
+            },
+
+            // LEVEL 2: Mencari Sisi Tegak a/b & Tripel Pythagoras (200 PTS)
+            {
+                id: 5,
+                level: 2,
+                points: 200,
+                a: "?", b: 12, c: 15,
+                question: "Diketahui sisi miring c = 15 cm dan sisi alas b = 12 cm. Hitunglah tinggi segitiga (a)!",
+                options: ["a = 8 cm", "a = 9 cm", "a = 10 cm", "a = 7 cm"],
+                correctIndex: 1,
+                explanation: [
+                    "a² = c² - b²",
+                    "a² = 15² - 12² = 225 - 144",
+                    "a² = 81  ⇒  a = √81 = 9 cm"
+                ]
+            },
+            {
+                id: 6,
+                level: 2,
+                points: 200,
+                a: 8, b: "?", c: 17,
+                question: "Sebuah segitiga siku-siku memiliki hipotenusa 17 cm dan tinggi 8 cm. Berapakah panjang alasnya?",
+                options: ["15 cm", "13 cm", "12 cm", "10 cm"],
+                correctIndex: 0,
+                explanation: [
+                    "b² = c² - a²",
+                    "b² = 17² - 8² = 289 - 64",
+                    "b² = 225  ⇒  b = √225 = 15 cm"
+                ]
+            },
+            {
+                id: 7,
+                level: 2,
+                points: 200,
+                a: 7, b: 24, c: 25,
+                question: "Manakah di antara kelompok tiga bilangan berikut yang merupakan Tripel Pythagoras?",
+                options: ["(7, 24, 25)", "(6, 8, 11)", "(5, 10, 13)", "(8, 12, 15)"],
+                correctIndex: 0,
+                explanation: [
+                    "Uji Tripel Pythagoras: a² + b² = c²",
+                    "7² + 24² = 49 + 576 = 625",
+                    "25² = 625 (SAMA / BENAR!)"
+                ]
+            },
+            {
+                id: 8,
+                level: 2,
+                points: 200,
+                a: "?", b: 16, c: 20,
+                question: "Tentukan panjang sisi tegak a jika c = 20 cm dan b = 16 cm!",
+                options: ["10 cm", "12 cm", "14 cm", "11 cm"],
+                correctIndex: 1,
+                explanation: [
+                    "a² = 20² - 16²",
+                    "a² = 400 - 256 = 144",
+                    "a = √144 = 12 cm"
+                ]
+            },
+
+            // LEVEL 3: Segitiga Istimewa & Soal Cerita (300 PTS)
+            {
+                id: 9,
+                level: 3,
+                points: 300,
+                a: 6, b: 8, c: 10,
+                question: "Soal Cerita: Sebuah tangga sepanjang 10 meter disandarkan pada tembok. Jika jarak ujung bawah tangga ke tembok adalah 6 meter, berapakah tinggi tembok yang dicapai tangga?",
+                options: ["7 meter", "8 meter", "9 meter", "8.5 meter"],
+                correctIndex: 1,
+                explanation: [
+                    "Tangga = Sisi Miring (c = 10 m)",
+                    "Jarak ke tembok = Alas (a = 6 m)",
+                    "Tinggi² = 10² - 6² = 100 - 36 = 64",
+                    "Tinggi tembok = √64 = 8 meter"
+                ]
+            },
+            {
+                id: 10,
+                level: 3,
+                points: 300,
+                a: 10, b: 10, c: "10√2",
+                question: "Segitiga siku-siku sama kaki memiliki panjang sisi tegak 10 cm. Berapakah panjang sisi miringnya?",
+                options: ["10√2 cm", "10√3 cm", "20 cm", "15 cm"],
+                correctIndex: 0,
+                explanation: [
+                    "Sudut segitiga: 45° - 45° - 90°",
+                    "Rasio sisi = 1 : 1 : √2",
+                    "Sisi miring = 10 × √2 = 10√2 cm"
+                ]
+            },
+            {
+                id: 11,
+                level: 3,
+                points: 300,
+                a: 5, b: "5√3", c: 10,
+                question: "Pada segitiga siku-siku dengan sudut 30° - 60° - 90°, jika sisi di depan sudut 30° adalah 5 cm, berapakah panjang hipotenusanya?",
+                options: ["8 cm", "10 cm", "5√3 cm", "12 cm"],
+                correctIndex: 1,
+                explanation: [
+                    "Rasio sudut 30°-60°-90° = 1 : √3 : 2",
+                    "Sisi terpendek (depan 30°) = 5 cm",
+                    "Hipotenusa (depan 90°) = 2 × 5 = 10 cm"
+                ]
+            },
+            {
+                id: 12,
+                level: 3,
+                points: 300,
+                a: 12, b: 16, c: 20,
+                question: "Kapal berlayar ke utara sejauh 12 km, kemudian berbelok ke timur sejauh 16 km. Jarak terdekat kapal sekarang dari titik awal adalah...",
+                options: ["20 km", "24 km", "28 km", "22 km"],
+                correctIndex: 0,
+                explanation: [
+                    "Lintasan membentuk segitiga siku-siku",
+                    "Jarak² = 12² + 16² = 144 + 256 = 400",
+                    "Jarak terdekat = √400 = 20 km"
+                ]
+            }
+        ];
+
+        // GAME STATE
+        let gameState = {
+            score: 0,
+            combo: 1,
+            maxCombo: 1,
+            completedCount: 0,
+            cardStatus: {}, // id -> { done: true, correct: true/false }
+            currentQuestIndex: null,
+            timerInterval: null,
+            timeLeft: 45
+        };
+
+        // RENDER QUEST GRID
+        function renderQuestGrid() {
+            const grid = document.getElementById('questGrid');
+            grid.innerHTML = '';
+
+            pythagorasBank.forEach((q, index) => {
+                const status = gameState.cardStatus[q.id];
+                
+                let borderColor = q.level === 1 ? 'border-cyber-cyan/40 hover:border-cyber-cyan' :
+                                  q.level === 2 ? 'border-cyber-purple/40 hover:border-cyber-purple' :
+                                  'border-cyber-pink/40 hover:border-cyber-pink';
+
+                let badgeBg = q.level === 1 ? 'bg-cyber-cyan/20 text-cyber-cyan border-cyber-cyan/30' :
+                              q.level === 2 ? 'bg-cyber-purple/20 text-cyber-purple border-cyber-purple/30' :
+                              'bg-cyber-pink/20 text-cyber-pink border-cyber-pink/30';
+
+                let cardHtml = '';
+
+                if (!status) {
+                    cardHtml = `
+                        <div onclick="openArenaModal(${index})" class="group cursor-pointer bg-cyber-card/80 border ${borderColor} rounded-2xl p-4 flex flex-col justify-between min-h-[170px] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl relative overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-bold tracking-widest text-slate-400 group-hover:text-white">ARENA #${index + 1}</span>
+                                <span class="text-[10px] font-black px-2.5 py-0.5 rounded-full border ${badgeBg}">LEVEL ${q.level}</span>
+                            </div>
+
+                            <div class="my-2 flex items-center justify-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl bg-cyber-bg border border-cyber-border flex items-center justify-center text-cyber-cyan group-hover:scale-110 transition">
+                                    <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                                </div>
+                                <div class="text-left">
+                                    <div class="text-xs font-bold text-slate-300">Tantangan</div>
+                                    <div class="text-sm font-black text-cyber-yellow">+${q.points} PTS</div>
+                                </div>
+                            </div>
+
+                            <button class="w-full py-1.5 rounded-xl bg-cyber-bg border border-cyber-border group-hover:border-cyber-cyan text-xs font-bold text-slate-300 group-hover:text-cyber-cyan transition">
+                                MULAI MISI
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    const isCorrect = status.correct;
+                    const cardBg = isCorrect ? 'bg-emerald-950/30 border-emerald-500/40' : 'bg-rose-950/30 border-rose-500/40';
+                    const iconColor = isCorrect ? 'text-emerald-400' : 'text-rose-400';
+
+                    cardHtml = `
+                        <div onclick="openArenaModal(${index})" class="cursor-pointer bg-cyber-card/40 border ${cardBg} rounded-2xl p-4 flex flex-col justify-between min-h-[170px] transition hover:opacity-90">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-bold text-slate-500">ARENA #${index + 1}</span>
+                                <i class="fa-solid ${isCorrect ? 'fa-circle-check' : 'fa-circle-xmark'} ${iconColor} text-lg"></i>
+                            </div>
+
+                            <div class="my-auto text-center">
+                                <div class="text-xl font-black font-orbitron ${iconColor}">${isCorrect ? '+' + q.points : '0'} PTS</div>
+                                <div class="text-[10px] text-slate-400 mt-1">Klik untuk pembahasan</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                grid.innerHTML += cardHtml;
+            });
+
+            // Update Header Stats
+            document.getElementById('scoreDisplay').innerText = gameState.score;
+            document.getElementById('comboDisplay').innerText = `x${gameState.combo}`;
+            document.getElementById('progressDisplay').innerText = `${gameState.completedCount} / ${pythagorasBank.length}`;
+        }
+
+        // RENDER SVG TRIANGLE VISUAL SIMULATOR
+        function renderSvgTriangle(a, b, c) {
+            const svgContainer = document.getElementById('svgContainer');
+            
+            // Dynamic SVG Triangle Construction
+            svgContainer.innerHTML = `
+                <svg viewBox="0 0 200 150" class="w-full h-full animate-glow-triangle">
+                    <!-- Right Angle Symbol -->
+                    <path d="M 35 110 L 45 110 L 45 120" fill="none" stroke="#00f3ff" stroke-width="2"/>
+                    
+                    <!-- Triangle Polygon -->
+                    <polygon points="35,120 165,120 35,30" fill="rgba(0, 243, 255, 0.08)" stroke="#00f3ff" stroke-width="3" stroke-linejoin="round"/>
+                    
+                    <!-- Vertices Glow Dots -->
+                    <circle cx="35" cy="120" r="4" fill="#ff007f"/>
+                    <circle cx="165" cy="120" r="4" fill="#ff007f"/>
+                    <circle cx="35" cy="30" r="4" fill="#ff007f"/>
+
+                    <!-- Labels -->
+                    <!-- Alas (b) -->
+                    <text x="100" y="138" fill="#e2e8f0" font-size="12" font-family="Orbitron" font-weight="bold" text-anchor="middle">b = ${b}</text>
+                    <!-- Tinggi (a) -->
+                    <text x="20" y="78" fill="#e2e8f0" font-size="12" font-family="Orbitron" font-weight="bold" text-anchor="middle">a = ${a}</text>
+                    <!-- Hipotenusa (c) -->
+                    <text x="110" y="65" fill="#ffcc00" font-size="12" font-family="Orbitron" font-weight="bold" text-anchor="middle">c = ${c}</text>
+                </svg>
+            `;
+        }
+
+        // OPEN ARENA MODAL
+        function openArenaModal(index) {
+            playSynthesizedSound('click');
+            gameState.currentQuestIndex = index;
+            const q = pythagorasBank[index];
+            const status = gameState.cardStatus[q.id];
+
+            document.getElementById('questionText').innerText = q.question;
+            document.getElementById('modalPtsBadge').innerText = `+${q.points} PTS`;
+            
+            const lvlBadge = document.getElementById('modalLevelBadge');
+            lvlBadge.innerText = `LEVEL ${q.level}`;
+            lvlBadge.className = q.level === 1 ? "bg-cyber-cyan text-slate-950 font-black text-xs px-3 py-1 rounded-lg uppercase tracking-wider" :
+                                 q.level === 2 ? "bg-cyber-purple text-white font-black text-xs px-3 py-1 rounded-lg uppercase tracking-wider" :
+                                 "bg-cyber-pink text-white font-black text-xs px-3 py-1 rounded-lg uppercase tracking-wider";
+
+            // Render SVG Triangle
+            renderSvgTriangle(q.a, q.b, q.c);
+
+            // Render Options
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, optIdx) => {
+                let btnStyle = "bg-cyber-bg hover:bg-slate-800 border-cyber-border text-slate-200 hover:border-cyber-cyan";
+
+                if (status) {
+                    if (optIdx === q.correctIndex) {
+                        btnStyle = "bg-emerald-900/60 border-emerald-500 text-emerald-200 font-bold";
+                    } else {
+                        btnStyle = "bg-cyber-bg/40 border-slate-800 text-slate-500 opacity-50";
+                    }
+                }
+
+                const btn = document.createElement('button');
+                btn.className = `p-4 rounded-xl border text-left font-semibold text-sm transition flex items-center justify-between ${btnStyle}`;
+                btn.disabled = !!status;
+                btn.onclick = () => submitAnswer(optIdx);
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-lg bg-slate-900 border border-cyber-border flex items-center justify-center text-xs font-black text-cyber-cyan">${String.fromCharCode(65 + optIdx)}</span>
+                        <span>${opt}</span>
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+
+            // Explanation & Controls setup
+            const expBox = document.getElementById('explanationBox');
+            const closeBtn = document.getElementById('closeModalBtn');
+
+            if (status) {
+                expBox.classList.remove('hidden');
+                document.getElementById('resultHeader').innerHTML = status.correct ? 
+                    `<i class="fa-solid fa-circle-check text-emerald-400"></i> Jawaban Tepat!` : 
+                    `<i class="fa-solid fa-circle-xmark text-rose-400"></i> Jawaban Kurang Tepat`;
+                
+                document.getElementById('explanationContent').innerHTML = q.explanation.map(l => `<div>• ${l}</div>`).join('');
+                closeBtn.classList.remove('hidden');
+                document.getElementById('timerText').innerText = "0s";
+                document.getElementById('timerBar').style.width = "0%";
+            } else {
+                expBox.classList.add('hidden');
+                closeBtn.classList.add('hidden');
+                startTimer();
+            }
+
+            document.getElementById('arenaModal').classList.remove('hidden');
+        }
+
+        // TIMER SYSTEM
+        function startTimer() {
+            clearInterval(gameState.timerInterval);
+            gameState.timeLeft = 45;
+            updateTimerUI();
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                updateTimerUI();
+
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    timeOutHandler();
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            document.getElementById('timerText').innerText = `${gameState.timeLeft}s`;
+            const pct = (gameState.timeLeft / 45) * 100;
+            document.getElementById('timerBar').style.width = `${pct}%`;
+        }
+
+        function timeOutHandler() {
+            playSynthesizedSound('wrong');
+            gameState.combo = 1;
+            finishQuest(false);
+        }
+
+        // SUBMIT ANSWER LOGIC
+        function submitAnswer(selectedIndex) {
+            clearInterval(gameState.timerInterval);
+            const q = pythagorasBank[gameState.currentQuestIndex];
+            const isCorrect = selectedIndex === q.correctIndex;
+
+            if (isCorrect) {
+                playSynthesizedSound('correct');
+                const calculatedPoints = q.points * gameState.combo;
+                gameState.score += calculatedPoints;
+                gameState.combo++;
+                if (gameState.combo > gameState.maxCombo) gameState.maxCombo = gameState.combo;
+
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+            } else {
+                playSynthesizedSound('wrong');
+                gameState.combo = 1;
+            }
+
+            finishQuest(isCorrect);
+        }
+
+        function finishQuest(isCorrect) {
+            const q = pythagorasBank[gameState.currentQuestIndex];
+            if (!gameState.cardStatus[q.id]) gameState.completedCount++;
+            
+            gameState.cardStatus[q.id] = { done: true, correct: isCorrect };
+
+            // Refresh Modal View
+            openArenaModal(gameState.currentQuestIndex);
+            renderQuestGrid();
+        }
+
+        function closeArenaModal() {
+            playSynthesizedSound('click');
+            clearInterval(gameState.timerInterval);
+            document.getElementById('arenaModal').classList.add('hidden');
+
+            // Trigger recap if all done
+            if (gameState.completedCount === pythagorasBank.length) {
+                setTimeout(showRecapModal, 400);
+            }
+        }
+
+        // RECAP MODAL
+        function showRecapModal() {
+            document.getElementById('recapScore').innerText = gameState.score;
+            document.getElementById('recapMaxCombo').innerText = `x${gameState.maxCombo}`;
+
+            let correctTotal = 0;
+            Object.values(gameState.cardStatus).forEach(s => { if (s.correct) correctTotal++; });
+            const accuracy = Math.round((correctTotal / pythagorasBank.length) * 100);
+            document.getElementById('recapAccuracy').innerText = `${accuracy}%`;
+
+            document.getElementById('recapModal').classList.remove('hidden');
+            confetti({ particleCount: 100, spread: 90, origin: { y: 0.5 } });
+        }
+
+        function closeRecapModal() {
+            document.getElementById('recapModal').classList.add('hidden');
+        }
+
+        function resetGamePrompt() {
+            playSynthesizedSound('click');
+            if (confirm("Apakah Anda yakin ingin memulai ulang permainan? Semua skor dan pencapaian akan direset.")) {
+                resetGame();
+            }
+        }
+
+        function resetGame() {
+            gameState.score = 0;
+            gameState.combo = 1;
+            gameState.maxCombo = 1;
+            gameState.completedCount = 0;
+            gameState.cardStatus = {};
+            clearInterval(gameState.timerInterval);
+            renderQuestGrid();
+        }
+
+        // ON LOAD INITIALIZATION
+        window.onload = function() {
+            renderQuestGrid();
+        };
+    </script>
+</body>
+</html>
